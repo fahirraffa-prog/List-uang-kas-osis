@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kas OSIS</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #17202a;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* HEADER */
+.header {
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 32px;
+    margin-bottom: 6px;
+}
+
+.header p {
+    color: #6b7280;
+}
+
+/* SUMMARY */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.06);
+}
+
+.card span {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.card h2 {
+    margin-top: 8px;
+    font-size: 25px;
+}
+
+/* CONTROLS */
+.controls {
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+input, select {
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+input {
+    flex: 1;
+}
+
+input:focus,
+select:focus {
+    border-color: #111827;
+}
+
+/* TABLE */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    overflow-x: auto;
+    box-shadow: 0 5px 20px rgba(0,0,0,.06);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #edf0f2;
+}
+
+th {
+    font-size: 13px;
+    color: #6b7280;
+    background: #fafafa;
+}
+
+td {
+    font-size: 14px;
+}
+
+/* STATUS */
+.status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.lunas {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.belum {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.amount {
+    font-weight: bold;
+}
+
+.tunggakan {
+    color: #dc2626;
+}
+
+.lebihan {
+    color: #16a34a;
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+    body {
+        padding: 15px;
+    }
+
+    .summary {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
+
+    .header h1 {
+        font-size: 26px;
+    }
+
+    th, td {
+        padding: 12px;
+        white-space: nowrap;
+    }
+}
+#lastUpdated {
+    display: block;
+    margin-top: 8px;
+    color: #9ca3af;
+    font-size: 12px;
+    font-style: italic;
+}
+footer {
+    text-align: center;
+    padding: 20px 0;
+    color: #9ca3af;
+    font-size: 15px;
+}
+
+footer strong {
+    color: #374151;
+}
+
+#themeToggle {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: white;
+    color: #17202a;
+    cursor: pointer;
+    font-size: 13px;
+    transition: .2s;
+}
+
+#themeToggle:hover {
+    transform: translateY(-2px);
+}
+
+/* DARK MODE */
+
+body.dark {
+    background: #111827;
+    color: #f9fafb;
+}
+
+body.dark .card,
+body.dark .controls,
+body.dark .table-container {
+    background: #1f2937;
+}
+
+body.dark th {
+    background: #18212f;
+    color: #9ca3af;
+}
+
+body.dark td {
+    border-color: #374151;
+}
+
+body.dark input,
+body.dark select {
+    background: #111827;
+    color: #f9fafb;
+    border-color: #374151;
+}
+
+body.dark input::placeholder {
+    color: #6b7280;
+}
+
+body.dark #themeToggle {
+    background: #1f2937;
+    color: #f9fafb;
+    border-color: #374151;
+}
+
+body.dark footer {
+    color: #6b7280;
+}
+
+body.dark footer strong {
+    color: #d1d5db;
+}
+
+body.dark .header p,
+body.dark .card span {
+    color: #9ca3af;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>List Uang Kas OSIS EPIS-JH</h1>
+        <p>Monitoring pembayaran kas anggota OSIS EPIS-JH</p>
+        <small id="lastUpdated">Last updated on September 25, 2026</small>
+        <button id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </div>
+
+    <div class="summary">
+
+        <div class="card">
+            <span>Total Anggota</span>
+            <h2 id="totalAnggota">0</h2>
+        </div>
+
+        <div class="card">
+            <span>Total Tunggakan</span>
+            <h2 id="totalTunggakan">Rp0</h2>
+        </div>
+
+        <div class="card">
+            <span>Total Lebihan</span>
+            <h2 id="totalLebihan">Rp0</h2>
+        </div>
+
+    </div>
+
+    <div class="controls">
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Cari nama..."
+        >
+
+        <select id="divisiFilter">
+            <option value="all">Semua Divisi</option>
+            <option value="Ketua">Ketua</option>
+            <option value="Wakil Ketua">Wakil Ketua</option>
+            <option value="Sekretaris">Sekretaris</option>
+            <option value="Bendahara">Bendahara</option>
+            <option value="Organisasi">Organisasi</option>
+            <option value="Kesekretariatan">Kesekretariatan</option>
+            <option value="Jurnalistik">Jurnalistik</option>
+            <option value="Olahraga & Seni">Olahraga & Seni</option>
+            <option value="Kerohanian">Kerohanian</option>
+            <option value="Dana Usaha">Dana Usaha</option>
+        </select>
+
+        <select id="statusFilter">
+            <option value="all">Semua Status</option>
+            <option value="Lunas">Lunas</option>
+            <option value="Belum">Belum</option>
+        </select>
+
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Divisi</th>
+                    <th>Status</th>
+                    <th>Tunggakan</th>
+                    <th>Lebihan</th>
+                </tr>
+            </thead>
+
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const data = [
+
+    
+    { nama: "Ammar",   divisi: "Ketua", status: "Lunas", tunggakan: 0,     lebihan: 0 },
+    { nama: "Vivi",    divisi: "Wakil Ketua", status: "Lunas", tunggakan: 0,     lebihan: 0 },
+    { nama: "Kahfi",   divisi: "Bendahara", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Yaafie",  divisi: "Olahraga & Seni", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Darrel",  divisi: "Organisasi", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Zaara",   divisi: "Sekretaris", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Gwen",    divisi: "Bendahara", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Aira",    divisi: "Sekretaris", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Jiilan",  divisi: "Kerohanian", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Raffaza", divisi: "Jurnalistik", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Evrard",  divisi: "Kesekretariatan", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Azka",    divisi: "Dana Usaha", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Dzuka",   divisi: "Jurnalistik", status: "Lunas", tunggakan: 0,     lebihan: 10000 },
+    { nama: "Qai",     divisi: "Olahraga & Seni", status: "Belum", tunggakan: 20000, lebihan: 0 },
+    { nama: "Alizha",  divisi: "Organisasi", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Raffa",   divisi: "Kerohanian", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Kaira",   divisi: "Olahraga & Seni", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Gege",    divisi: "Dana Usaha", status: "Lunas", tunggakan: 0,     lebihan: 10000 },
+    { nama: "Selma",   divisi: "Jurnalistik", status: "Belum", tunggakan: 20000,     lebihan: 0 },
+    { nama: "Irzha",   divisi: "Organisasi", status: "Lunas", tunggakan: 0,     lebihan: 10000 },
+    { nama: "Sabrina", divisi: "Kerohanian", status: "Lunas", tunggakan: 0, lebihan: 0 },
+    { nama: "Mischa",  divisi: "Dana Usaha", status: "Lunas", tunggakan: 0,     lebihan: 20000 },
+    { nama: "Ayla",    divisi: "Kesekretariatan", status: "Lunas", tunggakan: 0,     lebihan: 10000 },
+    { nama: "Dheva",   divisi: "Kesekretariatan", status: "Lunas", tunggakan: 0, lebihan: 10000 }
+
+
+];
+
+const tableBody = document.getElementById("tableBody");
+const search = document.getElementById("search");
+const divisiFilter = document.getElementById("divisiFilter");
+const statusFilter = document.getElementById("statusFilter");
+
+function rupiah(angka) {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0
+    }).format(angka);
+}
+
+function render() {
+
+    const keyword = search.value.toLowerCase();
+    const divisi = divisiFilter.value;
+    const status = statusFilter.value;
+
+    const filtered = data.filter(item => {
+
+        const cocokNama =
+            item.nama.toLowerCase().includes(keyword);
+
+        const cocokDivisi =
+            divisi === "all" || item.divisi === divisi;
+
+        const cocokStatus =
+            status === "all" || item.status === status;
+
+        return cocokNama && cocokDivisi && cocokStatus;
+    });
+
+    tableBody.innerHTML = "";
+
+    filtered.forEach((item, index) => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+
+            <td>
+                <strong>${item.nama}</strong>
+            </td>
+
+            <td>${item.divisi}</td>
+
+            <td>
+                <span class="status ${
+                    item.status === "Lunas"
+                    ? "lunas"
+                    : "belum"
+                }">
+                    ${item.status}
+                </span>
+            </td>
+
+            <td class="amount tunggakan">
+                ${rupiah(item.tunggakan)}
+            </td>
+
+            <td class="amount lebihan">
+                ${rupiah(item.lebihan)}
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    updateSummary();
+
+}
+
+function updateSummary() {
+
+    const totalTunggakan = data.reduce(
+        (total, item) => total + item.tunggakan,
+        0
+    );
+
+    const totalLebihan = data.reduce(
+        (total, item) => total + item.lebihan,
+        0
+    );
+
+    document.getElementById("totalAnggota").textContent =
+        data.length;
+
+    document.getElementById("totalTunggakan").textContent =
+        rupiah(totalTunggakan);
+
+    document.getElementById("totalLebihan").textContent =
+        rupiah(totalLebihan);
+}
+
+search.addEventListener("input", render);
+divisiFilter.addEventListener("change", render);
+statusFilter.addEventListener("change", render);
+
+render();
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    const button = document.getElementById("themeToggle");
+
+    if (document.body.classList.contains("dark")) {
+        button.textContent = "☀️ Light Mode";
+        localStorage.setItem("theme", "dark");
+    } else {
+        button.textContent = "🌙 Dark Mode";
+        localStorage.setItem("theme", "light");
+    }
+}
+
+// Simpan pilihan mode
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+    document.getElementById("themeToggle").textContent = "☀️ Light Mode";
+}
+
+</script>
+<footer>
+    <p>Created by <strong>R. Adrian Kahfi</strong></p>
+</footer>
+</body>
+</html>
